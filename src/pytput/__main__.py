@@ -3,6 +3,7 @@ from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
 from pytput.style import Style
 from pytput.utils import tput_format, tput_print, print_red
+from pytput import __title__, __version__
 
 EXAMPLES = (
     (
@@ -41,7 +42,14 @@ def _get_epilog():
 
 def main():
     parser = ArgumentParser(
-        prog="pytput", epilog=_get_epilog(), formatter_class=RawDescriptionHelpFormatter
+        prog=__title__,
+        epilog=_get_epilog(),
+        formatter_class=RawDescriptionHelpFormatter,
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version="{0} version {1}".format(__title__, __version__),
     )
     parser.add_argument(
         "-f",
