@@ -1,5 +1,5 @@
 from pytput.formatter import TputFormatter
-from pytput.style import Style
+from pytput.style import Color
 from pytput.tput import Tput
 
 
@@ -20,23 +20,23 @@ def tput_print(message, *args, **kwargs):
     print(tput_format(message, *args, **kwargs))
 
 
-def print_red(*args, **kwargs):
+def print_color(color: Color, *args, **kwargs):
     """
     Builtin print-like function that print a message in red
     """
-    print(Style.RED.value(_TPUT), sep="", end="")
+    if isinstance(color, int):
+        color = Color(color)
+    elif isinstance(color, str):
+        color = Color[color.upper()]
+    if not isinstance(color, Color):
+        raise ValueError("Unknown color: {0}".format(color))
+        color = Color(color)
+    print(_TPUT.setaf(color), sep="", end="")
     try:
         print(*args, **kwargs)
     finally:
-        print(Style.RESET.value(_TPUT), sep="", end="")
+        print(_TPUT.sgr0, sep="", end="")
 
 
-def print_green(*args, **kwargs):
-    """
-    Builtin print-like function that print a message in green
-    """
-    print(Style.GREEN.value(_TPUT), sep="", end="")
-    try:
-        print(*args, **kwargs)
-    finally:
-        print(Style.RESET.value(_TPUT), sep="", end="")
+def print_red(*args, **kwargs):
+    print_color(Color.RED, *args, **kwargs)

@@ -74,31 +74,31 @@ print(text)
 
 Here is the list of available styles
 
-| Formatter keyword | Python enum     | tput command   |
-| ----------------- | --------------- | -------------- |
-| *bold*            | Style.BOLD      | `tput bold`    |
-| *dim*             | Style.DIM       | `tput dim`     |
-| *underline*       | Style.UNDERLINE | `tput smul`    |
-| *blink*           | Style.BLINK     | `tput blink`   |
-| *standout*        | Style.STANDOUT  | `tput smso`    |
-| *reverse*         | Style.REVERSE   | `tput rev`     |
-| *reset*           | Style.RESET     | `tput sgr0`    |
-| *black*           | Style.BLACK     | `tput setaf 0` |
-| *red*             | Style.RED       | `tput setaf 1` |
-| *green*           | Style.GREEN     | `tput setaf 2` |
-| *yellow*          | Style.YELLOW    | `tput setaf 3` |
-| *blue*            | Style.BLUE      | `tput setaf 4` |
-| *purple*          | Style.PURPLE    | `tput setaf 5` |
-| *cyan*            | Style.CYAN      | `tput setaf 6` |
-| *white*           | Style.WHITE     | `tput setaf 7` |
-| *bg_black*        | Style.BG_BLACK  | `tput setab 0` |
-| *bg_red*          | Style.BG_RED    | `tput setab 1` |
-| *bg_green*        | Style.BG_GREEN  | `tput setab 2` |
-| *bg_yellow*       | Style.BG_YELLOW | `tput setab 3` |
-| *bg_blue*         | Style.BG_BLUE   | `tput setab 4` |
-| *bg_purple*       | Style.BG_PURPLE | `tput setab 5` |
-| *bg_cyan*         | Style.BG_CYAN   | `tput setab 6` |
-| *bg_white*        | Style.BG_WHITE  | `tput setab 7` |
+| Formatter keyword | tput command   |
+| ----------------- | -------------- |
+| *bold*            | `tput bold`    |
+| *dim*             | `tput dim`     |
+| *underline*       | `tput smul`    |
+| *blink*           | `tput blink`   |
+| *standout*        | `tput smso`    |
+| *reverse*         | `tput rev`     |
+| *reset*           | `tput sgr0`    |
+| *black*           | `tput setaf 0` |
+| *red*             | `tput setaf 1` |
+| *green*           | `tput setaf 2` |
+| *yellow*          | `tput setaf 3` |
+| *blue*            | `tput setaf 4` |
+| *purple*          | `tput setaf 5` |
+| *cyan*            | `tput setaf 6` |
+| *white*           | `tput setaf 7` |
+| *bg_black*        | `tput setab 0` |
+| *bg_red*          | `tput setab 1` |
+| *bg_green*        | `tput setab 2` |
+| *bg_yellow*       | `tput setab 3` |
+| *bg_blue*         | `tput setab 4` |
+| *bg_purple*       | `tput setab 5` |
+| *bg_cyan*         | `tput setab 6` |
+| *bg_white*        | `tput setab 7` |
 
 
 > Styles can be combined with `','` like `{message:underline,bold,yellow}`
@@ -110,18 +110,20 @@ Here is the list of available styles
 Some utility functions can be used to simply print lines with *styles*
 
 ```python
-from pytput import print_red, print_green, tput_format, tput_print
+from pytput import print_red, print_color, tput_format, tput_print, Color
 
 # These functions work like *print* builtin function
 print_red("My message is red")
-print_green("This message is green")
+print_color("green", "This message is green")
+print_color(Color.PURPLE, "This message is purple")
+print_color(4, "This message is blue")
 
 # Simply format a message usinf a TputFormatter
 text = tput_format("Build a string: {hello:bg_yellow} {world:cyan}!", hello="Hello", world="World")
 print(text)
+
 # Or simply use tc_print to replace the two lines above
 tput_print("Directly print: {hello:bg_yellow} {world:cyan}!", hello="Hello", world="World")
-
 ```
 ![utils](images/utils.png)
 

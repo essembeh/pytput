@@ -2,7 +2,7 @@ import sys
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
 from pytput.style import Style
-from pytput.utils import tput_format, tput_print
+from pytput.utils import tput_format, tput_print, print_red
 
 EXAMPLES = (
     (
@@ -57,7 +57,7 @@ def main():
     try:
         tput_print(args.format[0], *args.args, check_tty=args.check_tty)
     except BaseException as e:
-        print(str(e), file=sys.stderr)
+        print_red(str(e), file=sys.stderr)
         exit(2)
 
 
