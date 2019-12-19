@@ -1,15 +1,8 @@
-import os
 import sys
 from string import Formatter
 
 from pytput.style import Style
 from pytput.tput import Tput
-
-__PYTPUT_DISABLED = "PYTPUT_DISABLE"
-
-
-def pytput_is_enabled(check_tty=True):
-    return not os.getenv(__PYTPUT_DISABLED) and (not check_tty or sys.stdout.isatty())
 
 
 class TputFormatter(Formatter):
@@ -17,9 +10,9 @@ class TputFormatter(Formatter):
     Formatter to format a string using styles
     """
 
-    def __init__(self, check_tty=True):
-        self.__check_tty = check_tty
-        self.__tput = Tput()
+    def __init__(self, *args, check_tty=True, **kwargs):
+        Formatter.__init__(self, *args, **kwargs)
+        self.check_tty = check_tty
 
     def format_field(self, value, format_spec):
         # Do formatting
@@ -27,11 +20,11 @@ class TputFormatter(Formatter):
         super_format = []
         for item in format_spec.split(","):
             # Ensure style is not already set
-            if item.upper() in Style.__members__:
-                # Check termicolor is enabled
-                if pytput_is_enabled(self.__check_tty):
-                    s = Style[item.upper()]
-                    before += s.value(self.__tput)
+            style = Style.find(item)
+            if style is not None:
+                # Check pytput is enabled
+                if not self.check_tty or sys.stdout.isatty():
+                    before += style.value
             else:
                 super_format.append(item)
         # Perform super() formatting
@@ -40,4 +33,27 @@ class TputFormatter(Formatter):
         if len(before) == 0:
             return value
         # Return formatted value
-        return before + value + self.__tput.sgr0
+        return before + value + Tput.sgr0()
+
+    def get_value(self, *args, **kwargs):
+        key = args[0]
+        if (
+            isinstance(key, str)
+            and len(key) > 2
+            and key[0] == key[-1]
+            and key[0] in ("'", '"')
+        ):
+            # allow {"Hello"} type variables
+            return key[1:-1]
+        return super().get_value(*args, **kwargs)
+
+
+class TputString(str):
+    def format(self, *args, check_tty: bool = True, **kwargs):  # noqa
+        return TputFormatter(check_tty=check_tty).format(str(self), *args, **kwargs)
+
+    def __add__(self, other):
+        return TputString(str(self) + other)
+
+
+strcolor = TputString

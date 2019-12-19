@@ -1,5 +1,4 @@
 # Dev tools
-/devenv
 /venv
 
 # Python
@@ -11,10 +10,8 @@ __pycache__
 /dist/
 
 # Generated
-/flake-report/
-/coverage-report/
-/tests.xml
-/.coverage
+/.coverage*
+/.tox/
 
 # Vscodium
 /.vscode/*

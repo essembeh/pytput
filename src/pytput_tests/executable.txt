@@ -1,0 +1,4 @@
+This is a message with styles ;)
+[1m[31mThis is(B[m [4m[2m[33ma message(B[m [45m[33m[5mwith styles ;)(B[m
+[1m[31mThis is(B[m [4m[2m[33ma multiline message(B[m
+[45m[33m[5mwith styles ;)(B[m

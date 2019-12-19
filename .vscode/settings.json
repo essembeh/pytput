@@ -1,6 +1,7 @@
 {
     "files.exclude": {
         "venv/": true,
+        ".tox/": true,
         "**/__pycache__/": true,
     },
     "python.pythonPath": "venv/bin/python",

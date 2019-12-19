@@ -1,34 +1,30 @@
 import sys
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
-from pytput.style import Style
-from pytput.utils import tput_format, tput_print, print_red
 from pytput import __title__, __version__
+from pytput.style import Style
+from pytput.formatter import strcolor
 
+EXAMPLE_STR = '{"Hello":red,bg_yellow,bold} {0:blink,underline,green}!'
 EXAMPLES = (
     (
-        "pytput '{0:red,bg_yellow,bold} {1:blink,underline,green}!' 'Hello' 'World'",
-        tput_format(
-            "{0:red,bg_yellow,bold} {1:blink,underline,green}!", "Hello", "World"
-        ),
+        "{prog} '{fmt}' 'World'".format(prog=__title__, fmt=EXAMPLE_STR),
+        strcolor(EXAMPLE_STR).format("World", check_tty=False),
     ),
     (
-        "pytput '{0:red,bg_yellow,bold} {1:blink,underline,green}!' 'Hello' 'World' | tee /tmp/pytput.test",
+        "{prog} '{fmt}' 'World' | tee /tmp/pytput.test".format(
+            prog=__title__, fmt=EXAMPLE_STR
+        ),
         "Hello World!",
     ),
     ("cat /tmp/pytput.test", "Hello World!"),
     (
-        "pytput --force '{0:red,bg_yellow,bold} {1:blink,underline,green}!' 'Hello' 'World' | tee /tmp/pytput.test",
-        tput_format(
-            "{0:red,bg_yellow,bold} {1:blink,underline,green}!", "Hello", "World"
+        "{prog} --force '{fmt}' 'World' | tee /tmp/pytput.test".format(
+            prog=__title__, fmt=EXAMPLE_STR
         ),
+        strcolor(EXAMPLE_STR).format("World", check_tty=False),
     ),
-    (
-        "cat /tmp/pytput.test",
-        tput_format(
-            "{0:red,bg_yellow,bold} {1:blink,underline,green}!", "Hello", "World"
-        ),
-    ),
+    ("cat /tmp/pytput.test", strcolor(EXAMPLE_STR).format("World", check_tty=False)),
 )
 
 
@@ -36,11 +32,11 @@ def _get_epilog():
     out = ["examples"]
     for cmd, output in EXAMPLES:
         out += ("  $ " + cmd, "  " + output)
-    out += ("", "available styles:", ", ".join([s.name.lower() for s in Style]))
+    out += ("", "available styles:", ", ".join(map(str.lower, Style.all_styles())))
     return "\n".join(out)
 
 
-def main():
+def main(sysargs=None):
     parser = ArgumentParser(
         prog=__title__,
         epilog=_get_epilog(),
@@ -59,15 +55,16 @@ def main():
         action="store_false",
         help="force styles and colors. By default, if STDOUT is not a TTY (ex: in a pipe or redirected in a file), colors and styles are disabled",
     )
-    parser.add_argument("format", nargs=1, help="python str.format-like format")
+    parser.add_argument("format", help="python str.format-like format")
     parser.add_argument("args", nargs="*", help="format arguments")
-    args = parser.parse_args()
+    args = parser.parse_args(sysargs)
     try:
-        tput_print(args.format[0], *args.args, check_tty=args.check_tty)
+        print(strcolor(args.format).format(*args.args, check_tty=args.check_tty))
     except BaseException as e:
-        print_red(str(e), file=sys.stderr)
-        exit(2)
+        print(Style.RED.apply(e), file=sys.stderr)
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
