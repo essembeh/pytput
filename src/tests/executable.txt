@@ -1,4 +1,0 @@
-This is a message with styles ;)
-[1m[31mThis is[m [4m[2m[33ma message[m [45m[33m[5mwith styles ;)[m
-[1m[31mThis is[m [4m[2m[33ma multiline message[m
-[45m[33m[5mwith styles ;)[m

@@ -1,0 +1,14 @@
+Hello W!
+[1mHello(B[m [2mWorld(B[m!
+[4mHello(B[m [5mWorld(B[m!
+[7mHello(B[m [7mWorld(B[m!
+[30mHello(B[m [31mWorld(B[m!
+[32mHello(B[m [33mWorld(B[m!
+[34mHello(B[m [35mWorld(B[m!
+[36mHello(B[m [37mWorld(B[m!
+[40mHello(B[m [41mWorld(B[m!
+[42mHello(B[m [43mWorld(B[m!
+[44mHello(B[m [45mWorld(B[m!
+[46mHello(B[m [47mWorld(B[m!
+(B[m[1m[4m[5m[32m[44mHello(B[m [1m[4m[5m[32m[44m(B[mWorld(B[m!
+[31m[32m[36mHello(B[m [7m[7mWorld(B[m!

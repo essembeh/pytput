@@ -2,37 +2,33 @@
 
 all: clean tests coverage flake8
 
-venv: requirements.txt
+venv: requirements.txt requirements-dev.txt 
 	virtualenv -p python3 venv --no-site-packages
 	./venv/bin/pip install -r requirements.txt
+	./venv/bin/pip install -r requirements-dev.txt
 	touch venv
-
-clean:
-	rm -rf flake-report coverage-report .coverage tests.xml
-
-flake8:
-	flake8 src/
-
-coverage:
-	rm -f .coverage
-	pytest --cov=pytput src/tests
-	coverage html --directory=coverage-report
-
-tests: 
-	pytest --junitxml=tests.xml src/
 
 install:
 	test -n "$(VIRTUAL_ENV)"
-	python3 setup.py install
-	#python3 setup.py install_data
+	pip install -e .
 
-watch:
+publish:
 	test -n "$(VIRTUAL_ENV)"
-	rerun  -d src -p "*.py" -x "make install >/dev/null 2>&1"
-
-build: tests
 	rm -rf dist/
 	python3 setup.py sdist bdist_wheel
-
-publish: build
 	twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
+
+docker-image:
+	docker build \
+		--build-arg APT_EXTRA_PACKAGES="xterm" \
+		-t multipy:pytput \
+		https://github.com/essembeh/multipy.git
+
+docker-test:
+	docker run \
+		--rm \
+		-it \
+		--volume $(PWD):/src:ro \
+		-e GIT_CLEAN=1 \
+		-e TOXENV -e TOX_SKIP_ENV \
+		multipy:pytput -- -x

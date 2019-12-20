@@ -1,5 +1,8 @@
-import functools
-from enum import Enum, IntEnum, unique
+from dataclasses import dataclass
+from enum import IntEnum, unique
+from functools import partial
+
+from pytput.tput import Tput
 
 
 @unique
@@ -21,34 +24,60 @@ class Color(IntEnum):
         return str(self.value)
 
 
-@unique
-class Style(Enum):
+@dataclass
+class TputStyle:
+    _func: callable
+
+    def __str__(self):
+        return self.value
+
+    @property
+    def value(self):
+        return self._func()
+
+    def apply(self, text: str):
+        return self.value + str(text) + Style.RESET.value
+
+
+class Style:
     """
     Represent a terminal style.
     """
 
-    BOLD = functools.partial(lambda t: t.bold)
-    DIM = functools.partial(lambda t: t.dim)
-    UNDERLINE = functools.partial(lambda t: t.smul)
-    BLINK = functools.partial(lambda t: t.blink)
-    STANDOUT = functools.partial(lambda t: t.smso)
-    REVERSE = functools.partial(lambda t: t.rev)
-    RESET = functools.partial(lambda t: t.sgr0)
+    BOLD = TputStyle(Tput.bold)
+    DIM = TputStyle(Tput.dim)
+    UNDERLINE = TputStyle(Tput.smul)
+    BLINK = TputStyle(Tput.blink)
+    STANDOUT = TputStyle(Tput.smso)
+    REVERSE = TputStyle(Tput.rev)
+    RESET = TputStyle(Tput.sgr0)
 
-    BLACK = functools.partial(lambda t: t.setaf(Color.BLACK))
-    RED = functools.partial(lambda t: t.setaf(Color.RED))
-    GREEN = functools.partial(lambda t: t.setaf(Color.GREEN))
-    YELLOW = functools.partial(lambda t: t.setaf(Color.YELLOW))
-    BLUE = functools.partial(lambda t: t.setaf(Color.BLUE))
-    PURPLE = functools.partial(lambda t: t.setaf(Color.PURPLE))
-    CYAN = functools.partial(lambda t: t.setaf(Color.CYAN))
-    WHITE = functools.partial(lambda t: t.setaf(Color.WHITE))
+    BLACK = TputStyle(partial(Tput.setaf, Color.BLACK))
+    RED = TputStyle(partial(Tput.setaf, Color.RED))
+    GREEN = TputStyle(partial(Tput.setaf, Color.GREEN))
+    YELLOW = TputStyle(partial(Tput.setaf, Color.YELLOW))
+    BLUE = TputStyle(partial(Tput.setaf, Color.BLUE))
+    PURPLE = TputStyle(partial(Tput.setaf, Color.PURPLE))
+    CYAN = TputStyle(partial(Tput.setaf, Color.CYAN))
+    WHITE = TputStyle(partial(Tput.setaf, Color.WHITE))
 
-    BG_BLACK = functools.partial(lambda t: t.setab(Color.BLACK))
-    BG_RED = functools.partial(lambda t: t.setab(Color.RED))
-    BG_GREEN = functools.partial(lambda t: t.setab(Color.GREEN))
-    BG_YELLOW = functools.partial(lambda t: t.setab(Color.YELLOW))
-    BG_BLUE = functools.partial(lambda t: t.setab(Color.BLUE))
-    BG_PURPLE = functools.partial(lambda t: t.setab(Color.PURPLE))
-    BG_CYAN = functools.partial(lambda t: t.setab(Color.CYAN))
-    BG_WHITE = functools.partial(lambda t: t.setab(Color.WHITE))
+    BG_BLACK = TputStyle(partial(Tput.setab, Color.BLACK))
+    BG_RED = TputStyle(partial(Tput.setab, Color.RED))
+    BG_GREEN = TputStyle(partial(Tput.setab, Color.GREEN))
+    BG_YELLOW = TputStyle(partial(Tput.setab, Color.YELLOW))
+    BG_BLUE = TputStyle(partial(Tput.setab, Color.BLUE))
+    BG_PURPLE = TputStyle(partial(Tput.setab, Color.PURPLE))
+    BG_CYAN = TputStyle(partial(Tput.setab, Color.CYAN))
+    BG_WHITE = TputStyle(partial(Tput.setab, Color.WHITE))
+
+    @classmethod
+    def all_styles(cls):
+        return tuple(
+            sorted(n for n, o in cls.__dict__.items() if isinstance(o, TputStyle))
+        )
+
+    @classmethod
+    def find(cls, name: str):
+        for n, o in cls.__dict__.items():
+            if isinstance(o, TputStyle) and n.lower() == name.lower():
+                return o
