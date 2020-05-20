@@ -2,7 +2,8 @@ import unittest
 from os import getenv
 from pathlib import Path
 
-from pytput.formatter import TputFormatter, strcolor
+from pytput.formatter import TputFormatter
+from pytput.utils import tput_format
 
 TEST_FOLDER = Path(__file__).parent
 
@@ -32,14 +33,13 @@ class TestFormatter(unittest.TestCase):
         ):
             fmt = "{'Hello':" + s1 + "} {0:" + s2 + "}!"
             l1 = TputFormatter(check_tty=False).format(fmt, "World")
-            l2 = strcolor(fmt).format("World", check_tty=False)
+            l2 = tput_format(fmt, "World", check_tty=False)
             self.assertEqual(l1, l2)
             lines.append(l1)
 
         if getenv("PYTPUT_GEN_EXPECTED") == "1":
             with expected_file.open("w") as fp:
-                for l in lines:
-                    fp.write(l + "\n")
+                fp.write("\n".join(lines) + "\n")
             self.skipTest("Expected file generated")
 
         self.assertTrue(expected_file.exists())

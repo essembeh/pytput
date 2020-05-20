@@ -2,15 +2,16 @@
 setuptools
 setuptools-scm
 pytest
+pytest-xdist
+pytest-cov
+tox
 coverage 
-black
 rope
+black
 twine
-keyring
 
 ## Flake8 & plugins
 flake8
-flake8-html
 pep8-naming
 flake8-builtins
 flake8-blind-except

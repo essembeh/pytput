@@ -35,32 +35,36 @@ To setup a development environment:
 $ git clone https://github.com/essembeh/pytput
 $ cd pytput
 $ make venv
+$ make install
 $ source venv/bin/activate
-(venv) $ pip install -e .
+(venv) $ pytput --help
 ```
 
 # Usage
 
-## Using *strcolor* instead of *str*
+## Using *tput_format* and *tput_print*
 
-`strcolor` is a subclass of builtin `str` class to overide the default `str.format` method to use `TputFormatter`
+`tput_format` allow to format messages using *colors* and *styles*.
+This is nothing more than a shortcut to use `TputFormatter`.
+
+`tput_print` simply prints the message after formatting it.
 
 ```python
-from pytput import strcolor
-# Create a strcolor like a string 
-a = strcolor("Hello")
+from pytput import tput_format, tput_print
+# Create a format message
+fmt = "Hello {who:red,bold}"
 # You can print it
-print(a)
-# You can append text
-a += " {who:red,bold}"
-print(a)
+print(fmt)
 # When formatting, styles are applied
-print(a.format(who="World"))
+a = tput_format(fmt, who="World")
+print(a)
+# Equivalent to
+tput_print(fmt, who="World")
 # And you can also use *constant* like {'today':bold} will be the string "today" with bold style applied
-a += ", how are you {'today':green,underline}"
-print(a.format(who="User"))
+fmt += ", how are you {'today':green,underline}"
+tput_print(fmt, who="User")
 ```
-![strcolor](images/strcolor.png)
+![tput_format](images/tput_format.png)
 
 > Styles can be combined with `','` like `{message:underline,bold,yellow}`
 
@@ -160,15 +164,15 @@ $ cat /tmp/pytput.txt
 
 Using *pytput python3 API*, you can force styles and colors even if `sys.stdout` is not a TTY using `TputFormatter`:
 ```python
-from pytput import TputFormatter, strcolor
+from pytput import TputFormatter, tput_print
 
 # These lines won't have colors if you redirect stdout to a file
 print(TputFormatter().format("{0:red} {'World':green}!", "Hello"))
-print(strcolor("{0:red} {'World':green}!").format("Hello"))
+tput_print("{0:red} {'World':green}!", "Hello"))
 
 # These line will have colors even if stdout is redirected 
 print(TputFormatter(check_tty=False).format("{0:red} {'World':green}!", "Hello"))
-print(strcolor("{0:red} {'World':green}!").format("Hello", check_tty=False))
+tput_print("{0:red} {'World':green}!", "Hello", check_tty=False))
 ```
 
 You can totally disable `pytput` by setting `PYTPUT_DISABLE` variable in environment.
@@ -180,4 +184,4 @@ $ PYTPUT_DISABLE=1 pytput '{0:red} {"World":green}!' 'Hello'
 ```
 ![env](images/env.png)
 
-> Note: When using *pytput API* (`strcolor`, `TputFormatter` ...), setting the environment variable `PYTPUT_DISABLE=1` will also disable all colors and styles.
+> Note: When using *pytput API* (`tput_print`, `TputFormatter` ...), setting the environment variable `PYTPUT_DISABLE=1` will also disable all colors and styles.

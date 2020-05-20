@@ -51,8 +51,7 @@ class TestExecutable(unittest.TestCase):
         )
         if getenv("PYTPUT_GEN_EXPECTED") == "1":
             with expected_file.open("w") as fp:
-                for l in lines:
-                    fp.write(l + "\n")
+                fp.write("\n".join(lines))
             self.skipTest("Expected file generated")
 
         self.assertTrue(expected_file.exists())

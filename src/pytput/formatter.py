@@ -46,14 +46,3 @@ class TputFormatter(Formatter):
             # allow {"Hello"} type variables
             return key[1:-1]
         return super().get_value(*args, **kwargs)
-
-
-class TputString(str):
-    def format(self, *args, check_tty: bool = True, **kwargs):  # noqa
-        return TputFormatter(check_tty=check_tty).format(str(self), *args, **kwargs)
-
-    def __add__(self, other):
-        return TputString(str(self) + other)
-
-
-strcolor = TputString
